@@ -19,5 +19,5 @@
         published_ports:
           - "8083:8080"
 
-    - name: Install Kubernetes
-      include_tasks: kubernetes_installation.yml
+#    - name: Install Kubernetes
+#      include_tasks: kubernetes_installation.yml
