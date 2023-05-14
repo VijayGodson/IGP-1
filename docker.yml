@@ -7,19 +7,6 @@
       apt:
         update_cache: yes
 
-#    - name: Install Docker
-#      apt:
-#        name: docker.io
-#        state: present
-
-#    - name: Build Docker image
-#      docker_image:
-#       name: myapp:latest
-#       build:
-#         path: /root
-#         source: build
-#       state: present
-
     - name: Build docker image
       command: docker build -t myapp /root/.
 
