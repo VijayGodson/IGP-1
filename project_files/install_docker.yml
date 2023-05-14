@@ -106,3 +106,4 @@
 
   handlers:
     - include_tasks: Restart_Flannel.yml
+    - include_tasks: check.yml

@@ -1,0 +1,51 @@
+- name: Download and install Kubernetes
+  become: true
+  gather_facts: false
+  hosts: all
+  tasks:
+    - name: Download installK8S.sh script
+      get_url:
+        url: "https://raw.githubusercontent.com/lerndevops/labs/master/scripts/installK8S.sh"
+        dest: "/tmp/installK8S.sh"
+        mode: '0755'
+
+    - name: Run the installK8S.sh script
+      shell: /tmp/installK8S.sh
+
+- name: Initialize Kubernetes cluster
+  become: true
+  command: >
+    sudo kubeadm init --ignore-preflight-errors=all
+  register: kubeadm_init
+
+- name: Create Kubernetes config directory
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - "{{ ansible_user_dir }}/.kube"
+
+- name: Copy Kubernetes config to user directory
+  become: true
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ ansible_user_dir }}/.kube/config"
+    remote_src: true
+  when: kubeadm_init|success
+
+- name: Set ownership of Kubernetes config directory
+  become: true
+  file:
+    path: "{{ ansible_user_dir }}/.kube/config"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+  when: kubeadm_init|success
+
+- name: Download Calico YAML file
+  get_url:
+   url: https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/calico.yaml
+   dest: /tmp/calico.yaml
+
+- name: Apply Calico YAML file
+  command: kubectl apply -f /tmp/calico.yaml
