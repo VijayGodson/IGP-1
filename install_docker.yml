@@ -1,0 +1,108 @@
+---
+- name: Install Docker and Flannel
+  hosts: all
+  become: true
+  become_user: root
+  vars:
+    docker_version: latest
+    flannel_version: "v0.14.0"
+    cidr: "10.244.0.0/16"
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Remove conflicting Docker source entry
+      lineinfile:
+        path: /etc/apt/sources.list.d/docker.list
+        state: absent
+        regexp: '^deb.*docker.com.*$'
+
+    - name: Install required packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
+        state: present
+
+    - name: Install Docker
+      apt:
+       name:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+       state: latest
+
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        append: yes
+        groups: docker
+
+    - name: Install Flannel
+      get_url:
+        url: https://github.com/coreos/flannel/releases/download/{{ flannel_version }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz
+        dest: /tmp/flannel-{{ flannel_version }}-linux-amd64.tar.gz
+
+    - name: Extract Flannel binary
+      unarchive:
+        src: /tmp/flannel-{{ flannel_version }}-linux-amd64.tar.gz
+        dest: /tmp/
+        remote_src: yes
+
+    - name: Move Flannel binary to /usr/local/bin
+      copy:
+        src: /tmp/flanneld
+        dest: /usr/local/bin/flanneld
+        mode: "u+x"
+        remote_src: true
+
+    - name: Create Flannel service file
+      copy:
+        dest: /etc/systemd/system/flanneld.service
+        content: |
+          [Unit]
+          Description=Flannel network fabric for CoreOS Linux
+          After=etcd.service
+          Requires=etcd.service
+
+          [Service]
+          EnvironmentFile=/etc/sysconfig/flanneld
+          ExecStart=/usr/local/bin/flanneld $FLANNEL_OPTIONS
+          Restart=always
+          RestartSec=10
+          StartLimitInterval=0
+
+          [Install]
+          WantedBy=multi-user.target
+      notify: Restart Flannel
+
+    - name: Create Flannel configuration file directory
+      file:
+        path: /etc/sysconfig
+        state: directory
+
+    - name: Create Flannel configuration file
+      copy:
+        dest: /etc/sysconfig/flanneld
+        content: |
+          FLANNEL_ETCD_ENDPOINTS="http://{{ inventory_hostname }}:2379"
+          FLANNEL_ETCD_PREFIX="/coreos.com/network"
+          FLANNEL_OPTIONS="-iface={{ ansible_default_ipv4.interface }} -etcd-cafile=/etc/ssl/etcd/ca.pem -etcd-certfile=/etc/ssl/etcd/client
+      notify: Restart Flannel
+
+  handlers:
+    - include_tasks: Restart_Flannel.yml

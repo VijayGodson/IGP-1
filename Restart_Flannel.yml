@@ -1,0 +1,8 @@
+---
+- name: Flannel Handler Playbook
+  handlers:
+    - name: Restart Flannel
+      systemd:
+        daemon_reload: yes
+        name: flanneld
+        state: restarted
