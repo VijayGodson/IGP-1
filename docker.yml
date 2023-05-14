@@ -1,0 +1,33 @@
+---
+- hosts: host
+  become: true
+
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+
+#    - name: Install Docker
+#      apt:
+#        name: docker.io
+#        state: present
+
+#    - name: Build Docker image
+#      docker_image:
+#       name: myapp:latest
+#       build:
+#         path: /root
+#         source: build
+#       state: present
+
+    - name: Build docker image
+      command: docker build -t myapp /root/.
+
+    - name: Create Docker container
+      docker_container:
+        name: my-container
+        image: myapp:latest
+        state: started
+        restart_policy: always
+        published_ports:
+          - "8083:8080"
