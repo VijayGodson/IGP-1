@@ -1,0 +1,51 @@
+---
+- name: Create Deployment and Service
+  hosts: localhost
+  gather_facts: false
+  become: true
+
+  tasks:
+    - name: Create Deployment
+      k8s:
+        api_version: apps/v1
+        kind: Deployment
+        name: myapp-deployment
+        namespace: default
+        definition:
+          metadata:
+            labels:
+              app: myapp
+          spec:
+            replicas: 3
+            selector:
+              matchLabels:
+                app: myapp
+            template:
+              metadata:
+                labels:
+                  app: myapp
+              spec:
+                containers:
+                  - name: myapp-container
+                    image: vijaygodson/myapp:latest
+                    ports:
+                      - containerPort: 8080
+
+    - name: Create Service
+      k8s:
+        api_version: v1
+        kind: Service
+        name: myapp-service
+        namespace: default
+        definition:
+          metadata:
+            labels:
+              app: myapp
+          spec:
+            selector:
+              app: myapp
+            ports:
+              - protocol: TCP
+                port: 8081
+                targetPort: 8080
+            type: NodePort
