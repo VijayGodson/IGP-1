@@ -7,5 +7,5 @@ RUN cd /tmp && tar xvfz apache-tomcat-9.0.74.tar.gz
 RUN cp -Rv /tmp/apache-tomcat-9.0.74/* /usr/local/tomcat/
 #ADD /var/lib/jenkins/workspace/IGP-1/target/ABCtechnologies-1.0.war /usr/local/tomcat/webapps/
 ADD /*.war /usr/local/tomcat/webapps/
-EXPOSE 8080
+EXPOSE 8081
 CMD /usr/local/tomcat/bin/catalina.sh run
