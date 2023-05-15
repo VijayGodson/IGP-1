@@ -105,5 +105,11 @@
       notify: Restart Flannel
 
   handlers:
-    - include_tasks: Restart_Flannel.yml
+#    - include_tasks: Restart_Flannel.yml
     - include_tasks: check.yml
+  handlers:
+    - name: Restart Flannel
+      systemd:
+        daemon_reload: yes
+        name: flanneld
+        state: restarted
