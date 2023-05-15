@@ -90,7 +90,18 @@
           WantedBy=multi-user.target
       notify: Restart Flannel
 
-    - name: Create Flannel configuration file directory
+    - name: Install etcd
+      apt:
+        name: etcd
+        state: present
+
+    - name: Start etcd service
+      systemd:
+        name: etcd
+        state: started
+        enabled: yes
+ 
+   - name: Create Flannel configuration file directory
       file:
         path: /etc/sysconfig
         state: directory
@@ -106,7 +117,7 @@
 
   handlers:
 #    - include_tasks: Restart_Flannel.yml
-    - include_tasks: check.yml
+#    - include_tasks: check.yml
   handlers:
     - name: Restart Flannel
       systemd:
