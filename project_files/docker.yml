@@ -3,7 +3,7 @@
   become: true
   vars:
     dockerhub_username: vijaygodson
-    dockerhub_password: 12Qwaszx!1
+    dockerhub_password: Edureka@!
     docker_image_name: vijaygodson/myapp
     docker_image_tag: latest
 
