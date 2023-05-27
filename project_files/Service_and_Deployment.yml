@@ -6,7 +6,7 @@
 
   tasks:
     - name: Create Deployment
-      k8s:
+      kubernetes.core.k8s:
         api_version: apps/v1
         kind: Deployment
         name: myapp-deployment
@@ -29,10 +29,10 @@
                   - name: myapp-container
                     image: vijaygodson/myapp:latest
                     ports:
-                      - containerPort: 8080
+                      - containerPort: 8081
 
     - name: Create Service
-      k8s:
+      kubernetes.core.k8s:
         api_version: v1
         kind: Service
         name: myapp-service
@@ -47,5 +47,5 @@
             ports:
               - protocol: TCP
                 port: 8081
-                targetPort: 8080
+                targetPort: 8081
             type: NodePort
