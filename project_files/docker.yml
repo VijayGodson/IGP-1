@@ -3,7 +3,7 @@
   become: true
   vars:
     dockerhub_username: vijaygodson
-    dockerhub_password: Edureka@!
+    dockerhub_password: DecorateSources!12
     docker_image_name: vijaygodson/myapp
     docker_image_tag: latest
 
