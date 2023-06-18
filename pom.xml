@@ -8,12 +8,27 @@
 	<version>1.0</version>
 	<name>RetailModule</name>
 	<url>http://www.example.com</url>
+
+        <distributionManagement>
+          <snapshotRepository>
+             <id>nexusdeploymentrepo</id>
+		<name>mysnapshot</name>      
+		<url>http://3.138.245.9:8081/repository/mysnapshot/</url>
+          </snapshotRepository>
+
+          <repository>
+	     <id>nexusdeploymentrepo</id>
+                <name>myrelease</name>
+                <url>http://3.138.245.9:8081/repository/myrelease/</url>
+   	  </repository>
+
+        </distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<!-- JaCoCo Properties -->
-		<jacoco.version>0.8.6</jacoco.version>
+		<jacoco.version>0.8.10</jacoco.version>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
@@ -29,7 +44,7 @@
 		<dependency>
 			<groupId>org.jacoco</groupId>
 			<artifactId>jacoco-maven-plugin</artifactId>
-			<version>0.8.6</version>
+			<version>0.8.10</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -37,7 +52,7 @@
 			 <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>3.4.0</version>
             </plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -62,5 +77,3 @@
 		</plugins>
 	</build>
 </project>
-
-
