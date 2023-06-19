@@ -13,13 +13,13 @@
           <snapshotRepository>
              <id>nexusdeploymentrepo</id>
 		<name>mysnapshot</name>      
-		<url>http://3.138.245.9:8081/repository/mysnapshot/</url>
+		<url>http://http://18.117.234.8:8081/repository/mysnapshot/</url>
           </snapshotRepository>
 
           <repository>
 	     <id>nexusdeploymentrepo</id>
                 <name>myrelease</name>
-                <url>http://3.138.245.9:8081/repository/myrelease/</url>
+                <url>http://http://18.117.234.8:8081/repository/myrelease/</url>
    	  </repository>
 
         </distributionManagement>
